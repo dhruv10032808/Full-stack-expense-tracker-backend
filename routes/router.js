@@ -4,4 +4,6 @@ const router=express.Router();
 
 router.use('/signup',expenseController.postSignup);
 
+router.use('/login',expenseController.postLogin);
+
 module.exports=router;
