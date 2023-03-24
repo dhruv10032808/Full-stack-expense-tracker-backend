@@ -1,5 +1,6 @@
 const Expense=require('../models/user');
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken')
 exports.postSignup=(req,res,next)=>{
     console.log(req.body)
     bcrypt.hash(req.body.password,10,(err,hash)=>{
@@ -17,6 +18,10 @@ exports.postSignup=(req,res,next)=>{
     })
 }
 
+const getAccessToken=(id)=>{
+return jwt.sign({userId:id},'kufihwqfjiwhihinf984765gbemd')
+}
+
 exports.postLogin=(req,res,next)=>{
     console.log(req.body.email)
     Expense.findAll({where:{email:req.body.email}}).then(users=>{
@@ -26,7 +31,7 @@ exports.postLogin=(req,res,next)=>{
                     throw new Error('Something went wrong');
                 }
                 if(result===true){
-                    res.status(200).json({success:true,message:'User logged in successfully'})
+                    res.status(200).json({success:true,message:'User logged in successfully',token:getAccessToken(users[0].id)})
                 }else{
                     return res.status(400).json({success:false,message:'Password is incorrect'})
                 }
