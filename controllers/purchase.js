@@ -37,7 +37,7 @@ exports.updateTransactionStatus=async(req,res,next)=>{
         const promise1=order.update({paymentid:payment_id,status:'SUCCESSFUL'})
         const promise2=req.user.update({ispremiumuser:true})
         Promise.all([promise1,promise2]).then(()=>{
-            return res.status(201).json({success:true,message:'Transaction Successful'});
+            return res.status(201).json({success:true,message:'Transaction Successful',ispremiumuser:req.user.ispremiumuser});
         }).catch(err=>{
             throw new Error(err);
         })
