@@ -9,6 +9,7 @@ const sequelize=require('./util/database');
 const Order = require('./models/orders');
 const purchaseRoutes=require('./routes/purchase')
 const premiumRoutes=require('./routes/premium')
+const forgotPasswordRoutes=require('./routes/forgotPassword')
 const app=express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ app.use(userRoutes);
 app.use(expenseRoutes);
 app.use(purchaseRoutes)
 app.use('/premium',premiumRoutes)
+app.use('/password',forgotPasswordRoutes)
 
 User.hasMany(Order);
 Order.belongsTo(User);
