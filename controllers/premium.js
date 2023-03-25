@@ -4,15 +4,7 @@ const sequelize = require("../util/database");
 
 exports.getLeaderboard=async(req,res,next)=>{
    const users=await User.findAll({
-    attributes:['id','name',[sequelize.fn('sum',sequelize.col('expense-items.expense')),'total']],
-    include:[
-        {
-            model:ExpenseItems,
-            attributes:[]
-        }
-    ],
-    group:['user.id'],
-    order:[['total','DESC']]
+    order:[['totalExpense','DESC']]
 });
    res.status(200).json(users);
 }

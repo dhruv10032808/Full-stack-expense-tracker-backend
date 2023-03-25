@@ -1,4 +1,5 @@
 const ExpenseItems=require('../models/expense');
+const User = require('../models/user');
 
 exports.getExpenses=(req,res,next)=>{
     ExpenseItems.findAll({where:{userId:req.user.id}}).then(result=>{
@@ -16,8 +17,18 @@ exports.postExpenses=(req,res,next)=>{
         category:req.body.category,
         userId:req.user.id
     }).then(result=>{
-        res.status(201).json({newExpenseDetail:result})
-        console.log(result)
+        const totalExpense=Number(req.user.totalExpense)+Number(req.body.expense)
+        console.log(totalExpense);
+        User.update({
+            totalExpense:totalExpense
+        },{
+            where:{
+                id:req.user.id
+            }
+        }).then(()=>{
+            res.status(201).json({newExpenseDetail:result})
+            console.log(result)
+        })
     })
     .catch(err=>console.log(err))
 }

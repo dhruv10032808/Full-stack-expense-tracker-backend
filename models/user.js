@@ -22,7 +22,10 @@ const User=sequelize.define('user',{
         type:Sequelize.STRING,
         allowNull:false
     },
-    ispremiumuser:Sequelize.BOOLEAN
+    ispremiumuser:Sequelize.BOOLEAN,
+    totalExpense:{
+        type:Sequelize.INTEGER
+    }
 })
 
 module.exports=User;
