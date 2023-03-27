@@ -9,7 +9,8 @@ const sequelize=require('./util/database');
 const Order = require('./models/orders');
 const purchaseRoutes=require('./routes/purchase')
 const premiumRoutes=require('./routes/premium')
-const forgotPasswordRoutes=require('./routes/forgotPassword')
+const forgotPasswordRoutes=require('./routes/forgotPassword');
+const forgotPassword = require('./models/forgotPassword');
 const app=express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,6 +26,9 @@ Order.belongsTo(User);
 
 User.hasMany(Expense);
 Expense.belongsTo(User)
+
+User.hasMany(forgotPassword);
+forgotPassword.belongsTo(User);
 
 sequelize.sync().then(()=>{
     app.listen(3000);
