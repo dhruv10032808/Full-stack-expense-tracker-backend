@@ -9,17 +9,15 @@ exports.getExpenses=(req,res,next)=>{
     const page=(req.query.page) ? parseInt(req.query.page) : 1;
     console.log(limit);
     console.log(page);
-    ExpenseItems.findAndCountAll()
+    ExpenseItems.findAndCountAll({where:{userId:req.user.id}})
     .then((data) => {
-        console.log(data.count)
         var pages = Math.ceil(data.count / limit);
 
-    ExpenseItems.findAll({
+    ExpenseItems.findAll({where:{userId:req.user.id}},{
         offset:(page-1)*limit,
         limit:limit
-    },{where:{userId:req.user.id}}).then(result=>{
+    }).then(result=>{
       res.status(201).json({newExpenseDetail:result,ispremiumuser:req.user.ispremiumuser,pages:pages})
-      console.log(result)
     })
     .catch(err=>console.log(err))
   })
@@ -56,11 +54,14 @@ exports.postExpenses=async(req,res,next)=>{
     }
 }
 
-exports.getDelete=async (req,res,next)=>{
+exports.getDelete=async(req,res,next)=>{
     try{
-    const t=await sequelize.transaction()
+    //const tr=await sequelize.transaction()
     const userId=req.params.userId;
-    const results=await ExpenseItems.findAll({where:{id:userId,userId:req.user.id}},{transaction:t})
+    console.log(userId)
+    console.log(req.user.id)
+    const results=await ExpenseItems.findAll({where:{id:userId,userId:req.user.id}})
+    console.log(results)
         await results[0].destroy()
             console.log('deleted')
             const totalExpense=Number(req.user.totalExpense)-Number(results[0].expense)
@@ -68,12 +69,10 @@ exports.getDelete=async (req,res,next)=>{
                 totalExpense:totalExpense
             },{where:{
                 id:req.user.id
-            },
-            transaction:t
+            }
         })
-            await t.commit();
         }catch(err){
-            await t.rollback();
+            console.log(err)
             res.status(403).json({success:false,message:'Expense not deleted'})
         }
 }
