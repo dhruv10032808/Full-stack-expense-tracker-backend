@@ -13,9 +13,10 @@ exports.getExpenses=(req,res,next)=>{
     .then((data) => {
         var pages = Math.ceil(data.count / limit);
 
-    ExpenseItems.findAll({where:{userId:req.user.id}},{
+    ExpenseItems.findAll({
         offset:(page-1)*limit,
-        limit:limit
+        limit:limit,
+        where:{userId:req.user.id}
     }).then(result=>{
       res.status(201).json({newExpenseDetail:result,ispremiumuser:req.user.ispremiumuser,pages:pages})
     })
