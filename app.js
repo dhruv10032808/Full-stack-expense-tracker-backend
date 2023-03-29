@@ -1,4 +1,5 @@
 const express=require('express');
+const fs=require('fs');
 const bodyParser=require('body-parser');
 const cors=require('cors');
 const userRoutes=require('./routes/userRoutes')
@@ -12,8 +13,14 @@ const premiumRoutes=require('./routes/premium')
 const forgotPasswordRoutes=require('./routes/forgotPassword');
 const forgotPassword = require('./models/forgotPassword');
 const DownloadData = require('./models/downloadData');
+const helmet=require('helmet')
+const morgan=require('morgan');
+const path = require('path');
 const app=express();
+const accessLogStream=fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 app.use(cors());
+app.use(helmet());
+app.use(morgan('combined',{stream:accessLogStream}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(userRoutes);

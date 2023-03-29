@@ -19,7 +19,7 @@ exports.postSignup=(req,res,next)=>{
 }
 
 const getAccessToken=(id)=>{
-return jwt.sign({userId:id},'kufihwqfjiwhihinf984765gbemd')
+return jwt.sign({userId:id},process.env.TOKEN_SECRET)
 }
 
 exports.postLogin=(req,res,next)=>{

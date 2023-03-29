@@ -7,7 +7,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "helmet": "^6.0.1",
     "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
     "mysql2": "^3.2.0",
     "razorpay": "^2.8.6",
     "sequelize": "^6.29.3",
@@ -22,7 +24,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "NODE_ENV=production TOKEN_SECRET=kufihwqfjiwhihinf984765gbemd RAZORPAY_KEY_ID=rzp_test_5WunS2bO8WweUy RAZORPAY_KEY_SECRET=sOYaXYB5hkFMlg0e3QEKsIHt API_KEY=xsmtpsib-ee56f191f36f0f6a530c87999a62ccc46d9ce4c9589e6f208af3798b4ab59a71-C4phM7PzWvGLgmRF node app.js",
+    "start:dev": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",

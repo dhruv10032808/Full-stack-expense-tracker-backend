@@ -13,7 +13,7 @@ exports.forgotPassword=async(req,res,next)=>{
         .catch(err=>{
             throw new Error(err)
         })
-    sgMail.setApiKey('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')
+    sgMail.setApiKey(process.env.API_KEY)
 
             const msg = {
                 to: email, // Change to your recipient
