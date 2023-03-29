@@ -9,4 +9,8 @@ router.use('/get-expense',userAuthentication.authenticate,expenseController.getE
 
 router.use('/delete-expense/:userId',userAuthentication.authenticate,expenseController.getDelete);
 
+router.get('/user/download',userAuthentication.authenticate,expenseController.downloadExpenses)
+
+router.get('/user/recent-download',userAuthentication.authenticate,expenseController.downloadDataExpenses)
+
 module.exports=router;

@@ -1,6 +1,8 @@
 const ExpenseItems=require('../models/expense');
 const User = require('../models/user');
 const sequelize = require('../util/database');
+const S3Service=require('../services/S3services');
+const DownloadData = require('../models/downloadData');
 
 exports.getExpenses=(req,res,next)=>{
     ExpenseItems.findAll({where:{userId:req.user.id}}).then(result=>{
@@ -60,4 +62,27 @@ exports.getDelete=async (req,res,next)=>{
             await t.rollback();
             res.status(403).json({success:false,message:'Expense not deleted'})
         }
+}
+
+exports.downloadExpenses=async(req,res,next)=>{
+    try{
+    const expenses=await ExpenseItems.findAll({where:{userId:req.user.id}});
+    console.log(expenses)
+    const stringifiedExpenses=JSON.stringify(expenses);
+    const userId=req.user.id;
+    const filename=`Expense${userId}/${new Date()}.txt`;
+    const fileURL=await S3Service.uploadToS3(stringifiedExpenses,filename);
+    await DownloadData.create({fileURL,userId:req.user.id})
+    res.status(201).json({fileURL,success:true});
+    }catch(err){
+        res.status(500).json({fileURL:'',success:false,err:err})
+    }
+}
+
+exports.downloadDataExpenses=(req,res,next)=>{
+    DownloadData.findAll({where:{userId:req.user.id}}).then((data)=>{
+        res.status(201).json({data:data,success:true})
+    }).catch(err=>{
+        res.status(201).json({err:err,success:false})
+    })
 }
