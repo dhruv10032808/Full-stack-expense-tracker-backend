@@ -5,12 +5,26 @@ const S3Service=require('../services/S3services');
 const DownloadData = require('../models/downloadData');
 
 exports.getExpenses=(req,res,next)=>{
-    ExpenseItems.findAll({where:{userId:req.user.id}}).then(result=>{
-      res.status(201).json({newExpenseDetail:result,ispremiumuser:req.user.ispremiumuser})
+    const limit=(req.query.limit) ? parseInt(req.query.limit) : 2;
+    const page=(req.query.page) ? parseInt(req.query.page) : 1;
+    console.log(limit);
+    console.log(page);
+    ExpenseItems.findAndCountAll()
+    .then((data) => {
+        console.log(data.count)
+        var pages = Math.ceil(data.count / limit);
+
+    ExpenseItems.findAll({
+        offset:(page-1)*limit,
+        limit:limit
+    },{where:{userId:req.user.id}}).then(result=>{
+      res.status(201).json({newExpenseDetail:result,ispremiumuser:req.user.ispremiumuser,pages:pages})
       console.log(result)
     })
     .catch(err=>console.log(err))
-  }
+  })
+  .catch(err=>console.log(err))
+}
 
 exports.postExpenses=async(req,res,next)=>{
     try{
