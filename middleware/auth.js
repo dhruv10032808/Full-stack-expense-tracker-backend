@@ -6,7 +6,7 @@ exports.authenticate=(req,res,next)=>{
    console.log(token);
    const user=jwt.verify(token,'kufihwqfjiwhihinf984765gbemd');
    console.log(user.userId);
-   User.findByPk(user.userId).then(user=>{
+   User.findById(user.userId).then(user=>{
     req.user=user;
     next()
    })

@@ -14,10 +14,12 @@ exports.purchasepremium=async(req,res)=>{
       if(err){
         throw new Error(JSON.stringify(err));
       }
-      req.user.createOrder({
+      const newOrder=new Order({
         orderid:order.id,
-        status:'PENDING'
-      }).then(()=>{
+        status:'PENDING',
+        userId:req.user._id
+      })
+      newOrder.save().then(()=>{
         return res.status(201).json({order,key_id:rzp.key_id});
       }).catch(err=>{
         throw new Error(err)
@@ -33,11 +35,25 @@ exports.purchasepremium=async(req,res)=>{
 exports.updateTransactionStatus=async(req,res,next)=>{
     try{
     const {order_id,payment_id}=req.body
-    const order= await Order.findOne({where:{orderid:order_id}})
-        const promise1=order.update({paymentid:payment_id,status:'SUCCESSFUL'})
-        const promise2=req.user.update({ispremiumuser:true})
-        Promise.all([promise1,promise2]).then(()=>{
+    const order= await Order.find({orderid:order_id})
+    //console.log(order)
+    order[0].orderid=order[0].orderid;
+    order[0].paymentid=payment_id;
+    order[0].status='SUCCESSFUL';
+    order[0].userId=req.user._id;
+    console.log(order[0]);
+    //console.log(updatedOrder)
+    req.user._id=req.user._id;
+    req.user.name=req.user.name;
+    req.user.email=req.user.email;
+    req.user.password=req.user.password;
+    req.user.ispremiumuser=true
+    console.log(req.user)
+        order[0].save().then((result)=>{
+          console.log(result)
+          req.user.save().then(()=>{
             return res.status(201).json({success:true,message:'Transaction Successful',ispremiumuser:req.user.ispremiumuser});
+          }).catch(err=>consol.log(err))
         }).catch(err=>{
             throw new Error(err);
         })
@@ -49,11 +65,20 @@ exports.updateTransactionStatus=async(req,res,next)=>{
 exports.updateIncompleteTransactionStatus=async(req,res,next)=>{
     try{
     const {order_id}=req.body
-    const order= await Order.findOne({where:{orderid:order_id}})
-        const promise1=order.update({status:'UNSUCCESSFUL'})
-        const promise2=req.user.update({ispremiumuser:false})
-        Promise.all([promise1,promise2]).then(()=>{
-            return res.status(403).json({success:false,message:'Transaction Unsuccessful'});
+    const order= await Order.find({orderid:order_id})
+    order[0].orderid=order[0].orderid;
+    order[0].status='UNSUCCESSFUL';
+    order[0].userId=req.user._id;
+    console.log(order[0]);
+    req.user._id=req.user._id;
+    req.user.name=req.user.name;
+    req.user.email=req.user.email;
+    req.user.password=req.user.password;
+    req.user.ispremiumuser=false;
+    order[0].save().then(()=>{
+          req.user.save().then(()=>{
+            return res.json({success:false,message:'Transaction Unsuccessful'});
+          })
         }).catch(err=>{
             throw new Error(err);
         })

@@ -6,7 +6,10 @@ const userRoutes=require('./routes/userRoutes')
 const expenseRoutes=require('./routes/expenseRoutes')
 const User=require('./models/user');
 const Expense=require('./models/expense')
-const sequelize=require('./util/database');
+const dotenv=require('dotenv');
+dotenv.config();
+//const sequelize=require('./util/database');
+const mongoose=require('mongoose')
 const Order = require('./models/orders');
 const purchaseRoutes=require('./routes/purchase')
 const premiumRoutes=require('./routes/premium')
@@ -29,19 +32,7 @@ app.use(purchaseRoutes)
 app.use('/premium',premiumRoutes)
 app.use('/password',forgotPasswordRoutes)
 
-User.hasMany(Order);
-Order.belongsTo(User);
-
-User.hasMany(Expense);
-Expense.belongsTo(User)
-
-User.hasMany(forgotPassword);
-forgotPassword.belongsTo(User);
-
-User.hasMany(DownloadData);
-DownloadData.belongsTo(User);
-
-sequelize.sync().then(()=>{
+mongoose.connect('mongodb+srv://dhruvbhanu1003:Dhruv2808@cluster0.0oqu9aj.mongodb.net/expense?retryWrites=true&w=majority').then((result)=>{
     app.listen(3000);
 })
 .catch(err=>console.log(err))
